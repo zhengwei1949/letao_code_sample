@@ -41,33 +41,7 @@
             <!--一级导航开始-->
             <div class="cate-list">
                 <div id="leftCate">
-                    <a href="javascript:;"  class="items getSecond active">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
-                    <a href="javascript:;" class="items getSecond">运动馆</a>
+                    <!--模板引擎渲染出来的-->
                 </div>
             </div>
             <!--一级导航结束-->
@@ -271,6 +245,12 @@
 
     </script>
     <script src="./assets/zepto/zepto.min.js"></script>
+    <script src="./assets/artTemplate/template-native.js"></script>
+    <script id="category-first" type="text/template">
+        <% for(var i=0;i<result.length;i++){ %>
+        <a href="javascript:;" class="items getSecond"><%=result[i].categoryName%></a>
+        <%}%>
+    </script>
     <script>
     $(function(){
         $.ajax({
@@ -279,7 +259,10 @@
             data: {},
             dataType: "json",
             success: function (response) {
-                console.log(response);
+                // console.log(response);
+                //注意，第二个参数不能是数组，一定要是对象
+                var html = template('category-first',{result:response.rows});
+                $("#leftCate").html(html);
             }
         });
     })
