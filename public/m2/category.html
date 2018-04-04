@@ -248,11 +248,12 @@
     <script src="./assets/artTemplate/template-native.js"></script>
     <script id="category-first" type="text/template">
         <% for(var i=0;i<result.length;i++){ %>
-        <a href="javascript:;" class="items getSecond"><%=result[i].categoryName%></a>
+        <a  data-id="<%=result[i].id%>" href="javascript:;" class="items getSecond"><%=result[i].categoryName%></a>
         <%}%>
     </script>
     <script>
     $(function(){
+        //获取一级数据并渲染
         $.ajax({
             type: "get",
             url: "http://localhost:3000/category/queryTopCategory",
@@ -265,6 +266,21 @@
                 $("#leftCate").html(html);
             }
         });
+
+        //点击左侧，切换右侧
+        $('#leftCate').on('click','a',function(){
+            // console.log($(this).attr('data-id'));
+            var id = $(this).attr('data-id');
+            $.ajax({
+                type: "get",
+                url: "http://localhost:3000/category/querySecondCategory",
+                data: {id:id},
+                dataType: "json",
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+        })
     })
     </script>
 </body>
