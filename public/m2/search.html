@@ -72,6 +72,23 @@
             indicators: false, //是否显示滚动条
         });
     </script>
+    <script src="./assets/zepto/zepto.min.js"></script>
+    <script>
+    $(function(){
+        $('#searchBtn').on('click',function(){
+            // alert(1);
+            var keyword = $(this).siblings('input').val();
+            // alert(keyword);
+            if(keyword){
+                //用户输入了关键字
+                location.href = "search-result.html?keyword="+keyword;
+            }else{
+                //用户没有输入关键字
+                alert('请输入要搜索的关键字');
+            }
+        });
+    })
+    </script>
 </body>
 
 </html>
