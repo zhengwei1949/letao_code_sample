@@ -35,7 +35,7 @@
             <span class="mui-tab-label">会员中心</span>
         </a>
     </nav>
-    <div class="mui-content">
+    <div class="mui-content" id="refreshContainer">
         <div class="wrapper">
             <!--搜索筛选开始-->
             <div class="mui-row">
@@ -51,59 +51,8 @@
             <!--搜索筛选结束-->
             <!--产品区域开始-->
             <div class="product">
-                <ul class="list mui-clearfix">
-                    <li>
-                        <a href="#">
-                            <img src="images/product.jpg">
-                            <span class="name">
-                                adidas阿迪达斯 男式 场下休闲篮球鞋S83700
-                            </span>
-                            <p>
-                                <span>¥560.00</span>
-                                <span>¥888.00</span>
-                            </p>
-                            <button class="buy-now">立即购买</button>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <img src="images/product.jpg">
-                            <span class="name">
-                                adidas阿迪达斯 男式 场下休闲篮球鞋S83700
-                            </span>
-                            <p>
-                                <span>¥560.00</span>
-                                <span>¥888.00</span>
-                            </p>
-                            <button class="buy-now">立即购买</button>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <img src="images/product.jpg">
-                            <span class="name">
-                                adidas阿迪达斯 男式 场下休闲篮球鞋S83700
-                            </span>
-                            <p>
-                                <span>¥560.00</span>
-                                <span>¥888.00</span>
-                            </p>
-                            <button class="buy-now">立即购买</button>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <img src="images/product.jpg">
-                            <span class="name">
-                                adidas阿迪达斯 男式 场下休闲篮球鞋S83700
-                            </span>
-                            <p>
-                                <span>¥560.00</span>
-                                <span>¥888.00</span>
-                            </p>
-                            <button class="buy-now">立即购买</button>
-                        </a>
-                    </li>
+                <ul class="list mui-clearfix" id="search-box">
+                    <!--通过模板引擎渲染出来的-->
                 </ul>
             </div>
             <!--产品区域结束-->
@@ -113,6 +62,100 @@
         mui('.mui-content').scroll({
             indicators: false, //是否显示滚动条
         });
+    </script>
+    <script src="./assets/zepto/zepto.min.js"></script>
+    <script src="./assets/artTemplate/template-native.js"></script>
+    <script id="searchTpl" type="text/template">
+        <% for(var i=0;i<data.length;i++){ %>
+            <li>
+                <a href="#">
+                    <img src="images/product.jpg">
+                    <span class="name">
+                        <%=data[i].proName%>
+                    </span>
+                    <p>
+                        <span>¥<%=data[i].price%></span>
+                        <span>¥<%=data[i].oldPrice%></span>
+                    </p>
+                    <button class="buy-now">立即购买</button>
+                </a>
+            </li>
+        <% } %>
+    </script>
+    <script>
+    var keyword = getParamsByUrl(location.href, 'keyword');
+    // console.log(keyword);
+    var page = 1;
+    var priceSort = 1;//默认升序
+    mui.init({
+    pullRefresh: {
+        container: "#refreshContainer",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+        up: {
+            height: 50,//可选.默认50.触发上拉加载拖动距离
+            auto: true,//可选,默认false.自动上拉加载一次
+            contentrefresh: "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
+            contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+            callback: function(){
+                console.log(this == mui('#refreshContainer').pullRefresh());
+                getData();
+            } //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+    }}
+
+    });
+
+    //按照商品价格进行排序
+    $("#priceSort").on('tap',function(){
+        // console.log(1);
+        //排序 1代表升序 2代表降序
+        priceSort = priceSort == 1 ? 2:1;
+        page = 1;
+        $('#search-box').html("");
+        mui('#refreshContainer').pullRefresh().refresh(true);
+        getData();
+    })
+    /**
+     *  [获取地址栏的参数]
+     *  @param url - 地址字符串 
+     *  @param name - 要获取的参数名称
+     * return 参数名称对应的参数值
+     */
+    function getParamsByUrl(url,name){
+        var params = url.substr(url.indexOf('?')+1);
+        var param = params.split('&');
+        for(var i=0;i<param.length;i++){
+            var current = param[i].split('=');
+            if(current[0] == name){
+                return current[1];
+            }
+        }
+        return null;
+    }
+
+    function getData(){
+        // var that = this;
+        $.ajax({
+            type: "get",
+            url: "http://localhost:3000/product/queryProduct",
+            data: {
+                page: page++,
+                pageSize: 3,
+                proName: keyword,
+                price:priceSort
+            },
+            dataType: "json",
+            success: function (response) {
+                // console.log(response);
+                if(response.data.length > 0){
+                    var html = template('searchTpl', response);
+                    $('#search-box').append(html);
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                }else{
+                    //加载完毕
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            }
+        });
+    }
     </script>
 </body>
 
