@@ -11,6 +11,8 @@
     <script src="assets/mui/js/mui.min.js"></script>
     <script src="./assets/zepto/zepto.min.js"></script>
     <script>
+        //保存用户信息
+        var userInfo = null;
         $.ajax({
             type: "get",
             url: "http://localhost:3000/user/queryUserMessage",
@@ -21,6 +23,8 @@
                 // console.log(response);
                 if(response.error && response.error == 400){
                     location.href = 'login.html';
+                }else{
+                    userInfo = response;
                 }
             }
         });
@@ -52,16 +56,8 @@
         </a>
     </nav>
     <div class="mui-content">
-            <ul class="mui-table-view">
-                <li class="mui-table-view-cell mui-media">
-                    <a href="javascript:;">
-                        <img class="mui-media-object mui-pull-left" src="./images/user.jpg">
-                        <div class="mui-media-body">
-                            130121212323
-                            <p class='mui-ellipsis'>账号:demo</p>
-                        </div>
-                    </a>
-                </li>
+            <ul class="mui-table-view" id="userInfoBox">
+                
             </ul>
         	<ul class="mui-table-view">
                 <li class="mui-table-view-cell">
@@ -89,6 +85,18 @@
                 <button type="button" class="mui-btn mui-btn-block mui-btn-default" style="padding:4px;" id="log-out">退出登录</button>
             </div>
     </div>
+    <script src="./assets/artTemplate/template-native.js"></script>
+    <script id="userTpl" type="text/template">
+    <li class="mui-table-view-cell mui-media">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left" src="./images/user.jpg">
+                        <div class="mui-media-body">
+                            <%=mobile%>
+                            <p class='mui-ellipsis'>账号:<%=username%></p>
+                        </div>
+                    </a>
+                </li>
+    </script>
     <script>
     $(function(){
         $('#log-out').on('click',function(){
@@ -108,6 +116,12 @@
                 }
             });
         })
+        
+        //渲染用户中心信息
+        console.log(userInfo);
+        var html = template('userTpl',userInfo);
+        // console.log(html);
+        $('#userInfoBox').html(html);
     })
     </script>
 </body>

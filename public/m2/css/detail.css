@@ -216,3 +216,7 @@ body{
 .detail-buttons a{
 	background:#fa672d;
 }
+.detail-size span.active{
+	color: #fff;
+	background:darkorange;
+}

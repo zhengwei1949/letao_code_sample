@@ -37,90 +37,7 @@
     </nav>
     <div class="mui-content">
         <div class="wrapper">
-            <!--轮播开始-->
-        <div id="slider" class="mui-slider">
-            <div class="mui-slider-group mui-slider-loop">
-                <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-                <div class="mui-slider-item mui-slider-item-duplicate">
-                    <a href="#">
-                        <img src="./images/banner4.png">
-                    </a>
-                </div>
-                <!-- 第一张 -->
-                <div class="mui-slider-item">
-                    <a href="#">
-                        <img src="./images/banner1.png">
-                    </a>
-                </div>
-                <!-- 第二张 -->
-                <div class="mui-slider-item">
-                    <a href="#">
-                        <img src="./images/banner2.png">
-                    </a>
-                </div>
-                <!-- 第三张 -->
-                <div class="mui-slider-item">
-                    <a href="#">
-                        <img src="./images/banner3.png">
-                    </a>
-                </div>
-                <!-- 第四张 -->
-                <div class="mui-slider-item">
-                    <a href="#">
-                        <img src="./images/banner4.png">
-                    </a>
-                </div>
-                <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-                <div class="mui-slider-item mui-slider-item-duplicate">
-                    <a href="#">
-                        <img src="./images/banner1.png">
-                    </a>
-                </div>
-            </div>
-            <div class="mui-slider-indicator">
-                <div class="mui-indicator mui-active"></div>
-                <div class="mui-indicator"></div>
-                <div class="mui-indicator"></div>
-                <div class="mui-indicator"></div>
-            </div>
-        </div>
-        <!--轮播结束-->
-        <!--商品标题开始-->
-        <div class="detail-title">
-            【莹恋】MIZUNO美津浓V1GA159002乒乓球鞋男鞋女鞋室内综合训练鞋
-        </div>
-        <!--商品标题结束-->
-        <!--价格区域开始-->
-        <div class="detail-price">
-            价格：
-            <span class="new">¥112</span>
-            <span class="old">¥342</span>
-        </div>
-        <!--价格区域结束-->
-        <!--尺码开始-->
-        <div class="detail-size">
-            尺码：
-            <span>35</span>
-            <span>36</span>
-            <span>37</span>
-            <span>38</span>
-            <span>39</span>
-            <span>40</span>
-        </div>
-        <!--尺码结束-->
-        <!--数量开始-->
-        <div class="detail-num">
-            数量：
-            <!--这里的data-numbox-max='100'取决于商品库存值-->
-            <div class="mui-numbox" data-numbox-min="1" data-numbox-max='10'>
-                <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                <input class="mui-input-numbox" type="number" />
-                <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-            </div>
-            剩余：
-            <i>10</i>件
-        </div>
-        <!--数量结束-->
+        <div id="product-box"></div>
         <!--查看购物车、加入购物车开始-->
         <div class="detail-buttons"><a href="#">查看购物车</a><span id="addCart">加入购物车</span></div>
         <!--查看购物车、加入购物车结束-->
@@ -130,6 +47,143 @@
         mui('.mui-content').scroll({
             indicators: false, //是否显示滚动条
         });
+    </script>
+    <script src="./assets/zepto/zepto.min.js"></script>
+    <script src="./assets/artTemplate/template-native.js"></script>
+    <script type="text/template" id="productTpl">
+                <!--轮播开始-->
+        <div id="slider" class="mui-slider">
+            <div class="mui-slider-group mui-slider-loop">
+                <% for(var i=0;i<pic.length;i++){ %>
+                <div class="mui-slider-item">
+                    <a href="#">
+                        <img src="<%=pic[i].picAddr %>">
+                    </a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+        <!--轮播结束-->
+        <!--商品标题开始-->
+        <div class="detail-title">
+            <%=proName %>
+        </div>
+        <!--商品标题结束-->
+        <!--价格区域开始-->
+        <div class="detail-price">
+            价格：
+            <span class="new">¥<%=price %></span>
+            <span class="old">¥<%=oldPrice %></span>
+        </div>
+        <!--价格区域结束-->
+        <!--尺码开始-->
+        <div class="detail-size">
+            尺码：
+            <%var size = size.split('-');%>
+            <%for(var i=0;i<size.length;i++){%>
+                <span><%=size[i]%></span>
+            <%}%>
+        </div>
+        <!--尺码结束-->
+        <!--数量开始-->
+        <div class="detail-num">
+            数量：
+            <!--这里的data-numbox-max='100'取决于商品库存值-->
+            <div class="mui-numbox" data-numbox-min="1" data-numbox-max='<%=num%>'>
+                <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                <input class="mui-input-numbox" type="number" />
+                <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+            </div>
+            剩余：
+            <i><%=num%></i>件
+        </div>
+        <!--数量结束-->
+    </script>
+    <script>
+    /**
+         *  [获取地址栏的参数]
+         *  @param url - 地址字符串 
+         *  @param name - 要获取的参数名称
+         * return 参数名称对应的参数值
+         */
+        function getParamsByUrl(url, name) {
+            var params = url.substr(url.indexOf('?') + 1);
+            var param = params.split('&');
+            for (var i = 0; i < param.length; i++) {
+                var current = param[i].split('=');
+                if (current[0] == name) {
+                    return current[1];
+                }
+            }
+            return null;
+        }
+
+
+        $(function(){
+            //产品id
+            var id = getParamsByUrl(location.href,'id');
+            var productId = 0;
+            // console.log(id);
+            $.ajax({
+                type: "get",
+                url: "http://localhost:3000/product/queryProductDetail",
+                data: {id:id},
+                dataType: "json",
+                success: function (response) {
+                    productId = response.id;
+                    console.log(response);
+                    var html = template('productTpl',response);
+                    // console.log(html);
+                    $('#product-box').html(html);
+                    var gallery = mui('.mui-slider');
+                    gallery.slider({
+                        interval: 5000//自动轮播周期，若为0则不自动播放，默认为0；
+                    });
+                    //初始化数字输入框
+                    mui('.mui-numbox').numbox()
+                    
+                }
+            });
+            
+            $('#product-box').on('tap', ".detail-size span", function () {
+                // console.log($(this).html())
+                $(this).addClass('active').siblings().removeClass('active');
+            })
+
+
+            //加入购物车
+            $('#addCart').on('tap',function(){
+                var size = $('.detail-size span.active').html();
+                if(!size){
+                    mui.toast('请选择尺码');
+                    return;
+                }
+                // console.log(size);
+                var num = mui(".mui-numbox").numbox().getValue();
+                // console.log(num);
+                $.ajax({
+                    type: "post",
+                    url: "/cart/addCart",
+                    data: {
+                        productId:productId,
+                        num:num,
+                        size:size
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        // console.log(response)
+                        if(response.success){
+                            mui.confirm('加入购物车成功,跳转到购物车?',function(message){
+                                if(message.index){
+                                    //跳转到购物车
+                                    location.href = "cart.html";
+                                }
+                            })
+                        }
+                    }
+                });
+            })
+        })
     </script>
 </body>
 
